@@ -149,7 +149,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Moon, Sun, Menu, User, LogOut, Upload, Home, Compass, Info, UserPlus } from "lucide-react";
+import { Moon, Sun, Menu, User, LogOut, Upload, Home, Compass, Info, UserPlus , LogIn } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -280,10 +280,10 @@ const Navigation = () => {
               <Button
                 variant="default"
                 size="sm"
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate('/login')}
               >
-                <UserPlus className="h-4 w-4 mr-2" />
-                Sign Up
+                <LogIn className="h-4 w-4 mr-2" />
+                Login
               </Button>
             )}
           </div>
