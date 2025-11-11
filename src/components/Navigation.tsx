@@ -165,7 +165,7 @@ const Navigation = () => {
     const initialTheme = savedTheme || systemTheme;
     
     setTheme(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
+    document.documentElement.classList.toggle("light", initialTheme === "light");
   }, []);
 
   // Toggle theme
@@ -198,18 +198,20 @@ const Navigation = () => {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* <div className=" mx-auto px-4 sm:px-6 lg:px-8"> */}
+      <div className=" container mx-auto px-4 sm:px-6 lg:px-8">
+
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link 
             to="/" 
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground font-bold text-sm">
+            {/* <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground font-bold text-sm">
               HR
-            </div>
+            </div> */}
             <h1 className="text-lg md:text-xl font-heading font-bold text-foreground">
-              Heritage Repository
+              Heritage<br /> Repository
             </h1>
           </Link>
 
