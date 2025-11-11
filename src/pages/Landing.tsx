@@ -315,12 +315,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const archivePhotos = [
-  { src: '/rituals.jpg', caption: 'Community gathering at dusk', tags: ['community','ritual'] },
-  { src: '/material.jpg', caption: 'Handwoven patterns', tags: ['weaving','material-culture'] },
-  { src: '/folksongs.jpg', caption: 'Oral history recording', tags: ['oral-history','audio'] },
-  { src: '/folkdances.jpg', caption: 'Traditional dance practice', tags: ['dance'] },
-  { src: '/tools.jpg', caption: 'Craft tools and artifacts', tags: ['tools','craft'] },
-  { src: '/folktales.jpg', caption: 'Mountain village landscape', tags: ['landscape','village'] },
+  { src: '/rituals.jpg', caption: 'Woodcarving from a tree at Shangnyu Village', tags: ['community','Shangnyu Village'] },
+  { src: '/material.jpg', caption: 'Ornaments and Tools showpiece at Longwa Village - Angh\'s Residence', tags: ['showpiece','Longwa Village'] },
+  { src: '/folksongs.jpg', caption: 'Folktales, Folksongs sharing space. Meeting place for warfare.', tags: ['folktales','folksongs'] },
+  { src: '/folkdances.jpg', caption: 'Logdrum', tags: ['Logdrum'] },
+  { src: '/tools.jpg', caption: 'Craft tools and artefacts', tags: ['tools','craft'] },
+  { src: '/folktales.jpg', caption: 'Origin Stone at Chungliyimti Village', tags: ['Stone','Chungliyimti Village'] },
 ];
 
 const Landing = () => {
@@ -425,7 +425,8 @@ const Landing = () => {
 
       {/* How It Works */}
       <section ref={howRef} className="relative py-20 md:py-32 bg-background border-t border-border/60">
-        <div className="absolute inset-0 bg-tribal-shawl/5" />
+        <div className="absolute inset-0 bg-tribal-shawl/5 w-full" />
+
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="mb-16 text-center">
             <h2 className="text-3xl md:text-5xl font-bold heading-accent inline-block">How to Use the Repository</h2>
@@ -445,7 +446,7 @@ const Landing = () => {
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold text-lg">1</span>
-                <h3 className="text-xl md:text-2xl font-semibold">Learn & Explore</h3>
+                <h3 className="text-xl md:text-2xl font-semibold">Explore & Learn</h3>
               </div>
               <ul className="list-disc pl-5 text-sm md:text-base text-foreground/85 space-y-2">
                 <li>Browse Folksongs, Folktales, Ritual Practices and Material Culture</li>
@@ -543,11 +544,13 @@ const Landing = () => {
 
             <div className="flex flex-col md:flex-row-reverse gap-8 items-start">
               <div className="md:w-2/5 flex-shrink-0">
-                <div className="w-full h-72 rounded-2xl overflow-hidden border-4 border-primary/30 shadow-xl">
+                <div className="w-full h-auto rounded-2xl overflow-hidden border-4 border-primary/30 shadow-xl">
                   <img 
                     src="/verification.jpg"
                     alt="Verification process by community elders"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    // className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    // height={100}
+                    // width={100}
                   />
                 </div>
               </div>
@@ -585,15 +588,15 @@ const Landing = () => {
                 </p>
                 <ul className="space-y-2 text-base md:text-lg">
                   <li className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-green-50">Public</Badge>
+                    <Badge variant="outline" className="bg-green-500">Public</Badge>
                     <span className="text-foreground/85">Open for all viewers</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-yellow-50">Restricted</Badge>
+                    <Badge variant="outline" className="bg-yellow-500">Restricted</Badge>
                     <span className="text-foreground/85">Limited to researchers/learners</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-red-50">Confidential</Badge>
+                    <Badge variant="outline" className="bg-red-500">Confidential</Badge>
                     <span className="text-foreground/85">Accessible only to designated custodians</span>
                   </li>
                 </ul>
@@ -635,7 +638,7 @@ const Landing = () => {
                   <p className="text-base md:text-lg font-medium text-foreground mb-3">{photo.caption}</p>
                   <div className="flex flex-wrap gap-2">
                     {photo.tags.map(tag => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
+                      <Badge key={tag} variant="secondary" className="text-xs ">
                         {tag}
                       </Badge>
                     ))}
