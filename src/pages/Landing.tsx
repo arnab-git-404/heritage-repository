@@ -542,7 +542,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row-reverse gap-8 items-start">
+            {/* <div className="flex flex-col md:flex-row-reverse gap-8 items-start">
               <div className="md:w-2/5 flex-shrink-0">
                 <div className="w-full h-auto rounded-2xl overflow-hidden border-4 border-primary/30 shadow-xl">
                   <img 
@@ -566,7 +566,35 @@ const Landing = () => {
                   Goal: Ensure Authenticity and Ethical Handling
                 </p>
               </div>
-            </div>
+
+
+
+            </div> */}
+
+<div className="flex flex-col md:flex-row-reverse gap-8 items-center">
+  <div className="md:w-2/5 flex-shrink-0">
+    <div className="w-full h-auto rounded-2xl overflow-hidden border-4 border-primary/30 shadow-xl">
+      <img 
+        src="/verification.jpg"
+        alt="Verification process by community elders"
+        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  </div>
+  <div className="flex-1">
+    <div className="inline-flex items-center gap-3 mb-4">
+      <span className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground font-bold text-xl">2</span>
+      <h3 className="text-2xl md:text-3xl font-bold text-primary">Verification</h3>
+    </div>
+    <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
+      Community elders and cultural experts carefully review each submission for accuracy, sensitivity, and cultural integrity.
+    </p>
+    <p className="mt-4 text-sm md:text-base text-muted-foreground italic">
+      Goal: Ensure Authenticity and Ethical Handling
+    </p>
+  </div>
+</div>
+
 
             <div className="flex flex-col md:flex-row gap-8 items-start">
               <div className="md:w-2/5 flex-shrink-0">
