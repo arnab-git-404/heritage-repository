@@ -1150,13 +1150,22 @@ const Explore = () => {
                     {item.keywords && item.keywords.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {item.keywords.slice(0, 3).map((keyword, idx) => (
-                          <span 
-                            key={idx}
-                            className="text-xs bg-muted px-2 py-0.5 rounded"
+
+                          // <span 
+                          //   key={idx}
+                          //   className="text-xs px-2 py-0.5 rounded"
+                          // >
+                          //   {keyword}
+                          // </span>
+                       <Badge 
+                            key={idx} 
+                            variant="secondary"
+                            className="text-xs"
                           >
                             {keyword}
-                          </span>
-                        ))}
+                          </Badge>
+                       
+                       ))}
                         {item.keywords.length > 3 && (
                           <span className="text-xs text-muted-foreground">
                             +{item.keywords.length - 3} more

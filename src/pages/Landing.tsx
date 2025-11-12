@@ -315,7 +315,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const archivePhotos = [
-  { src: '/rituals.jpg', caption: 'Woodcarving from a tree at Shangnyu Village', tags: ['community','Shangnyu Village'] },
+  { src: '/rituals.jpeg', caption: 'Woodcarving from a tree at Shangnyu Village', tags: ['community','Shangnyu Village'] },
   { src: '/material.jpg', caption: 'Ornaments and Tools showpiece at Longwa Village - Angh\'s Residence', tags: ['showpiece','Longwa Village'] },
   { src: '/folksongs.jpg', caption: 'Folktales, Folksongs sharing space. Meeting place for warfare.', tags: ['folktales','folksongs'] },
   { src: '/folkdances.jpg', caption: 'Logdrum', tags: ['Logdrum'] },
@@ -439,14 +439,14 @@ const Landing = () => {
             <div className="group relative rounded-2xl p-8 bg-card border-2 hover:border-primary/50 transition-all hover:shadow-xl">
               <div className="mb-6 w-full h-56 rounded-xl overflow-hidden border-2 border-primary/20">
                 <img 
-                  src="/collection.jpg" 
+                  src="/collection02.jpeg" 
                   alt="Explore and learn about cultural heritage"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold text-lg">1</span>
-                <h3 className="text-xl md:text-2xl font-semibold">Explore & Learn</h3>
+                <h3 className="text-xl md:text-2xl font-semibold">Learn & Explore</h3>
               </div>
               <ul className="list-disc pl-5 text-sm md:text-base text-foreground/85 space-y-2">
                 <li>Browse Folksongs, Folktales, Ritual Practices and Material Culture</li>
