@@ -575,7 +575,7 @@ const Landing = () => {
   <div className="md:w-2/5 flex-shrink-0">
     <div className="w-full h-auto rounded-2xl overflow-hidden border-4 border-primary/30 shadow-xl">
       <img 
-        src="/verification.jpg"
+        src="/verification02.jpg"
         alt="Verification process by community elders"
         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
       />
