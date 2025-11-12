@@ -1157,7 +1157,8 @@ const Explore = () => {
                           // >
                           //   {keyword}
                           // </span>
-                       <Badge 
+                
+                        <Badge 
                             key={idx} 
                             variant="secondary"
                             className="text-xs"

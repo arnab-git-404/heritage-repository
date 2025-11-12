@@ -23,6 +23,7 @@ import Chat from "./pages/Chat";
 import Collaboration from "./pages/Collaboration";
 import ChatWidget from "./components/ChatWidget";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ReactLenis, useLenis } from 'lenis/react'
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
 const App = () => (
   // <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <ReactLenis root />
       <Toaster />
       <Sonner />
       <AuthProvider>

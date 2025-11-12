@@ -378,15 +378,15 @@ const Landing = () => {
           <path d="M0,700 C240,620 480,780 720,700 C960,620 1200,780 1440,700" fill="none" stroke="white" strokeWidth="1" />
         </svg>
         
-        <div className="relative z-10 w-full px-0 md:px-0">
+        <div className="container relative z-10 px-0 md:px-0 ">
           <div className="max-w-2xl md:max-w-3xl lg:max-w-3xl text-left pl-4 sm:pl-6 md:pl-8">
-            <h1 className="font-body uppercase tracking-[0.08em] text-primary-foreground text-4xl md:text-6xl lg:text-7xl leading-[1.1] font-semibold">
+            <h1 className="font-body uppercase tracking-[0.08em] text-primary-foreground dark:text-primary text-4xl md:text-6xl lg:text-7xl leading-[1.1] font-semibold">
               Heritage Repository
             </h1>
-            <h2 className="font-body uppercase tracking-[0.22em] text-primary-foreground/95 text-lg md:text-2xl lg:text-3xl mt-1 font-medium">
+            <h2 className="font-body uppercase tracking-[0.22em] text-primary-foreground/95 dark:text-primary text-lg md:text-2xl lg:text-3xl mt-1 font-medium">
               Consent-Based, Tiered Digital Archive
             </h2>
-            <p className="text-primary-foreground/90 text-sm md:text-base max-w-[55ch] mt-5">
+            <p className="text-primary-foreground/90 text-sm md:text-base dark:text-primary max-w-[55ch] mt-5">
               Safeguarding heritage — ethically and authentically. Discover, learn, and contribute with consent-first principles.
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -411,7 +411,7 @@ const Landing = () => {
           <div className="mt-6 md:mt-8 flex items-center justify-start gap-3 text-primary-foreground/90 pl-4 sm:pl-6 md:pl-8">
             <button
               onClick={() => scrollTo(howRef)}
-              className="inline-flex items-center gap-2 text-xs md:text-sm hover:text-primary transition-colors"
+              className="inline-flex items-center dark:text-primary gap-2 text-xs md:text-sm hover:text-primary transition-colors"
               aria-label="Scroll to how it works"
             >
               Learn how it works
