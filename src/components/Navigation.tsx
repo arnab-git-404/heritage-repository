@@ -322,7 +322,7 @@ const Navigation = () => {
                 <div className="flex flex-col space-y-4 mt-8">
                   {/* User Info (if authenticated) */}
                   {isAuthenticated && user && (
-                    <div className="flex items-center space-x-3 p-4 bg-muted rounded-lg">
+                    <div className="flex items-center space-x-3 p-4 border-2 rounded-xl">
                       <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold">
                         {user.name?.charAt(0).toUpperCase() || 'U'}
                       </div>

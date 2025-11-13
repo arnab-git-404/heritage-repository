@@ -1072,6 +1072,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Footer from "@/components/Footer";
 import {
@@ -1093,6 +1094,7 @@ import {
   UserCircle,
   Mail,
   Award,
+  CheckCircle2,
 } from "lucide-react";
 
 interface Submission {
@@ -1185,7 +1187,68 @@ const Admin = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+
+const [editUserDialogOpen, setEditUserDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editUserForm, setEditUserForm] = useState({
+    name: "",
+    email: "",
+    role: "",
+    country: "",
+    state: "",
+    tribe: "",
+    village: "",
+    bio: "",
+  });
+
+
+    const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setEditUserForm({
+      name: user.name || "",
+      email: user.email || "",
+      role: user.role || "",
+      country: user.country || "",
+      state: user.state || "",
+      tribe: user.tribe || "",
+      village: user.village || "",
+      bio: user.bio || "",
+    });
+    setEditUserDialogOpen(true);
+  };
+
+   const handleUpdateUser = async () => {
+    if (!editingUser) return;
+
+    setActionLoading(true);
+    // try {
+    //   const response = await fetch(`${API_URL}/api/admin/users/${editingUser._id}`, {
+    //     method: "PATCH",
+    //     headers: getAuthHeaders(),
+    //     body: JSON.stringify(editUserForm),
+    //   });
+
+    //   const data = await response.json();
+    //   if (!response.ok) throw new Error(data?.errors?.[0]?.msg || "Failed to update user");
+
+    //   toast({ title: "Success", description: "User updated successfully" });
+    //   setEditUserDialogOpen(false);
+    //   setEditingUser(null);
+    //   fetchUsers(true);
+    // } catch (error: any) {
+    //   toast({
+    //     title: "Error",
+    //     description: error.message || "Failed to update user",
+    //     variant: "destructive",
+    //   });
+    // } finally {
+    //   setActionLoading(false);
+    // }
+
+    toast({ title: "Info", description: "User update functionality is not implemented yet." });
+    setActionLoading(false);
+  };
 
   // Cache management
   const [cacheTimestamps, setCacheTimestamps] = useState<Record<string, number>>({});
@@ -1205,13 +1268,33 @@ const Admin = () => {
 
   useEffect(() => {
     if (activeTab === "dashboard") {
-      fetchDashboardStats();
+      fetchDashboardStats(true);
     } else if (activeTab === "users") {
-      fetchUsers();
+      fetchUsers(true);
     } else {
-      fetchSubmissions(activeTab);
+      fetchSubmissions(activeTab, true);
     }
   }, [activeTab]);
+
+
+  // Add these new useEffect hooks
+  useEffect(() => {
+    if (activeTab === "users") {
+      const debounce = setTimeout(() => {
+        fetchUsers(true);
+      }, 500);
+      return () => clearTimeout(debounce);
+    }
+  }, [searchTerm, roleFilter, activeTab]);
+
+    useEffect(() => {
+    if (activeTab !== "dashboard" && activeTab !== "users") {
+      const debounce = setTimeout(() => {
+        fetchSubmissions(activeTab, true);
+      }, 500);
+      return () => clearTimeout(debounce);
+    }
+  }, [searchTerm]);
 
   const isCacheValid = (key: string) => {
     const timestamp = cacheTimestamps[key];
@@ -1280,7 +1363,7 @@ const Admin = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data?.errors?.[0]?.msg || "Failed to fetch submissions");
 
-      setSubmissions(data.submissions);
+      setSubmissions(data.submissions || []);
       updateCache(cacheKey);
     } catch (error: any) {
       console.error("Fetch submissions error:", error);
@@ -1289,6 +1372,7 @@ const Admin = () => {
         description: error.message || "Failed to fetch submissions",
         variant: "destructive",
       });
+      setSubmissions([]);
     } finally {
       setLoading(false);
     }
@@ -1299,8 +1383,10 @@ const Admin = () => {
 
     setLoading(true);
     try {
+      const roleParam = roleFilter === "all" ? "" : roleFilter;
+      
       const response = await fetch(
-        `${API_URL}/api/admin/users?search=${searchTerm}&role=${roleFilter}`,
+        `${API_URL}/api/admin/users?search=${searchTerm}&role=${roleParam}`,
         { headers: getAuthHeaders() }
       );
 
@@ -1566,7 +1652,8 @@ const Admin = () => {
   const renderDashboard = () => (
     <div className="space-y-6">
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 ">
+
         <Card className="hover:shadow-lg transition-shadow cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -1795,12 +1882,13 @@ const Admin = () => {
           <div className="flex-1">
             <CardTitle>{user.name || "Unnamed User"}</CardTitle>
             <CardDescription>{user.email}</CardDescription>
-          </div>
           {user.role && (
             <Badge variant="outline" className="ml-auto">
-              {user.role}
+            {user.role}
             </Badge>
-          )}
+            )}
+          
+            </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -1822,6 +1910,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+
       <header className="border-b bg-card sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-heading font-bold text-primary">
@@ -1833,11 +1922,15 @@ const Admin = () => {
               size="icon"
               onClick={handleRefresh}
               disabled={refreshing}
-              className="hover:scale-110 transition"
+              // className="hover:scale-110 transition"
+              className="hover:scale-110 transition h-8 w-8 sm:h-10 sm:w-10"
+
             >
               <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
             </Button>
-            <Button variant="outline" onClick={handleLogout}>
+            {/* <Button variant="outline" onClick={handleLogout}> */}
+            <Button variant="outline" onClick={handleLogout} size="sm" className="text-xs sm:text-sm px-2 sm:px-4">
+
               Logout
             </Button>
           </div>
@@ -1846,12 +1939,14 @@ const Admin = () => {
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)}>
-          <TabsList className="grid w-full max-w-2xl grid-cols-5 mb-6">
+
+          {/* <TabsList className="grid w-full max-w-5xl grid-cols-5 mb-6 mx-auto rounded-xl bg-card shadow">
             <TabsTrigger value="dashboard" className="hover:scale-105 transition">
               <BarChart3 className="h-4 w-4 mr-2" />
               Dashboard
             </TabsTrigger>
             <TabsTrigger value="pending" className="hover:scale-105 transition">
+              <FileText className="h-4 w-4 mr-2" />
               Pending
               {stats && stats.pendingSubmissions > 0 && (
                 <Badge variant="secondary" className="ml-2">
@@ -1860,15 +1955,52 @@ const Admin = () => {
               )}
             </TabsTrigger>
             <TabsTrigger value="approved" className="hover:scale-105 transition">
+              <CheckCircle2 className="h-4 w-4 mr-2" />
               Approved
             </TabsTrigger>
             <TabsTrigger value="rejected" className="hover:scale-105 transition">
+              <XCircle className="h-4 w-4 mr-2" />
               Rejected
             </TabsTrigger>
             <TabsTrigger value="users" className="hover:scale-105 transition">
               Users
             </TabsTrigger>
+          </TabsList> */}
+
+             <TabsList className="grid w-full max-w-5xl grid-cols-5 mb-4 sm:mb-6 gap-1 mx-auto h-auto p-1 overflow-x-auto text-white rounded-3xl ">
+
+            <TabsTrigger value="dashboard" className="text-xs sm:text-sm px-1 sm:px-3 py-2 flex-col sm:flex-row gap-1 sm:gap-2 rounded-3xl ">
+              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Dashboard</span>
+              <span className="sm:hidden">Dash</span>
+            </TabsTrigger>
+            <TabsTrigger value="pending" className="text-xs sm:text-sm px-1 sm:px-3 py-2 flex-col sm:flex-row gap-1 sm:gap-2 relative rounded-3xl ">
+              <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Pending</span>
+              <span className="sm:hidden">Pend</span>
+              {stats && stats.pendingSubmissions > 0 && (
+                <Badge variant="secondary" className="text-[10px] sm:text-xs px-1 py-0 sm:ml-2 absolute -top-1 -right-1 sm:relative sm:top-0 sm:right-0">
+                  {stats.pendingSubmissions}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="approved" className="text-xs sm:text-sm px-1 sm:px-3 py-2 flex-col sm:flex-row gap-1 sm:gap-2 rounded-3xl">
+              <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Approved</span>
+              <span className="sm:hidden">Appr</span>
+            </TabsTrigger>
+            <TabsTrigger value="rejected" className="text-xs sm:text-sm px-1 sm:px-3 py-2 flex-col sm:flex-row gap-1 sm:gap-2 rounded-3xl ">
+              <XCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Rejected</span>
+              <span className="sm:hidden">Rej</span>
+            </TabsTrigger>
+            <TabsTrigger value="users" className="text-xs sm:text-sm px-1 sm:px-3 py-2 flex-col sm:flex-row gap-1 sm:gap-2 rounded-3xl">
+              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Users</span>
+              <span className="sm:hidden">User</span>
+            </TabsTrigger>
           </TabsList>
+
 
           {/* Search Bar */}
           {activeTab !== "dashboard" && (
@@ -1888,7 +2020,7 @@ const Admin = () => {
                     <SelectValue placeholder="Filter by role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Roles</SelectItem>
+                    <SelectItem value="all">All Roles</SelectItem>
                     <SelectItem value="Custodian">Custodian</SelectItem>
                     <SelectItem value="Researcher">Researcher</SelectItem>
                     <SelectItem value="Contributor">Contributor</SelectItem>
@@ -2012,36 +2144,38 @@ const Admin = () => {
         </DialogContent>
       </Dialog>
 
-      {/* User Details Dialog */}
-      <Dialog open={userDialogOpen} onOpenChange={setUserDialogOpen}>
-        <DialogContent className="max-w-2xl">
+ {/* Enhanced User Details Dialog with Edit */}
+      <Dialog open={userDialogOpen} onOpenChange={setUserDialogOpen} >
+        <DialogContent className=" max-h-[90vh] overflow-y-auto max-w-sm sm:max-w-md mx-auto">
+
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
           </DialogHeader>
           {selectedUser && (
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {selectedUser.avatar ? (
                   <img
                     src={selectedUser.avatar}
                     alt={selectedUser.name || "User"}
-                    className="h-20 w-20 rounded-full object-cover"
+                    className="h-16 w-16 sm:h-20 sm:w-20 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-                    <UserCircle className="h-12 w-12 text-primary" />
+                  <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-primary/10 flex items-center justify-center">
+                    <UserCircle className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
                   </div>
                 )}
-                <div>
-                  <h3 className="text-xl font-semibold">
+                <div className="flex-1">
+                  <h3 className="text-lg sm:text-xl font-semibold">
                     {selectedUser.name || "Unnamed User"}
                   </h3>
-                  <p className="text-muted-foreground">{selectedUser.email}</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">{selectedUser.email}</p>
                   {selectedUser.role && <Badge className="mt-2">{selectedUser.role}</Badge>}
                 </div>
+                
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 {selectedUser.country && (
                   <div>
                     <span className="font-semibold">Country:</span> {selectedUser.country}
@@ -2066,19 +2200,148 @@ const Admin = () => {
 
               {selectedUser.bio && (
                 <div>
-                  <h4 className="font-semibold mb-2">Bio</h4>
-                  <p className="text-sm text-muted-foreground">{selectedUser.bio}</p>
+                  <h4 className="font-semibold mb-2 text-sm sm:text-base">Bio</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{selectedUser.bio}</p>
                 </div>
               )}
 
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs sm:text-sm text-muted-foreground">
                 Joined: {new Date(selectedUser.createdAt).toLocaleString()}
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setUserDialogOpen(false)}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setUserDialogOpen(false)} className="w-full sm:w-auto">
               Close
+            </Button>
+            {selectedUser && (
+              <Button onClick={() => handleEditUser(selectedUser)} className="w-full sm:w-auto">
+                Edit User
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
+      {/* Edit User Dialog */}
+      <Dialog open={editUserDialogOpen} onOpenChange={setEditUserDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" >
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>Update user information and settings</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Name</Label>
+                <Input
+                  id="edit-name"
+                  value={editUserForm.name}
+                  onChange={(e) => setEditUserForm({ ...editUserForm, name: e.target.value })}
+                  placeholder="User name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  value={editUserForm.email}
+                  onChange={(e) => setEditUserForm({ ...editUserForm, email: e.target.value })}
+                  placeholder="user@example.com"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-role">Role</Label>
+              <Select value={editUserForm.role} onValueChange={(value) => setEditUserForm({ ...editUserForm, role: value })}>
+                <SelectTrigger id="edit-role">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Custodian">Custodian</SelectItem>
+                  <SelectItem value="Researcher">Researcher</SelectItem>
+                  <SelectItem value="Contributor">Contributor</SelectItem>
+                  <SelectItem value="Viewer">Viewer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-country">Country</Label>
+                <Input
+                  id="edit-country"
+                  value={editUserForm.country}
+                  onChange={(e) => setEditUserForm({ ...editUserForm, country: e.target.value })}
+                  placeholder="Country"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-state">State</Label>
+                <Input
+                  id="edit-state"
+                  value={editUserForm.state}
+                  onChange={(e) => setEditUserForm({ ...editUserForm, state: e.target.value })}
+                  placeholder="State/Region"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-tribe">Tribe</Label>
+                <Input
+                  id="edit-tribe"
+                  value={editUserForm.tribe}
+                  onChange={(e) => setEditUserForm({ ...editUserForm, tribe: e.target.value })}
+                  placeholder="Tribe"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-village">Village</Label>
+                <Input
+                  id="edit-village"
+                  value={editUserForm.village}
+                  onChange={(e) => setEditUserForm({ ...editUserForm, village: e.target.value })}
+                  placeholder="Village"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-bio">Bio</Label>
+              <Textarea
+                id="edit-bio"
+                value={editUserForm.bio}
+                onChange={(e) => setEditUserForm({ ...editUserForm, bio: e.target.value })}
+                placeholder="User bio..."
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditUserDialogOpen(false);
+                setEditingUser(null);
+              }}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateUser} disabled={actionLoading} className="w-full sm:w-auto">
+              {actionLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Update User"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

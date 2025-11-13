@@ -10,6 +10,7 @@ export default function Contact() {
     e.preventDefault();
     // Handle form submission
     alert("Form submitted! We'll get back to you soon.");
+    alert("Function will Be implemented soon.");
   };
 
   return (
