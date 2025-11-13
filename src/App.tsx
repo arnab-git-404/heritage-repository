@@ -24,6 +24,8 @@ import Collaboration from "./pages/Collaboration";
 import ChatWidget from "./components/ChatWidget";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ReactLenis, useLenis } from 'lenis/react'
+import Contact from "./pages/Contact";
+
 
 const queryClient = new QueryClient();
 
@@ -55,6 +57,7 @@ const App = () => (
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/category/:categoryName" element={<Layout><Category /></Layout>} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/contact" element={<Layout><Contact /></Layout>} />
             
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>

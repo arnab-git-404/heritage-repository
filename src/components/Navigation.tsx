@@ -149,7 +149,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Moon, Sun, Menu, User, LogOut, Upload, Home, Compass, Info, UserPlus , LogIn } from "lucide-react";
+import { Moon, Sun, Menu, User, LogOut, Upload, Home, Compass, Info, UserPlus , LogIn, Mail } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -181,6 +181,7 @@ const Navigation = () => {
     { name: "Explore", path: "/explore", icon: Compass },
     { name: "About Us", path: "/about-us", icon: Info },
     { name: "Upload", path: "/upload", icon: Upload },
+    { name: "Contact", path: "/contact", icon: Mail }
   ];
 
   const handleLogout = () => {
