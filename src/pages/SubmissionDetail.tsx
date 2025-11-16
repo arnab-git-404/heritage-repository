@@ -215,7 +215,7 @@ export default function SubmissionDetail() {
     <div className="container mx-auto py-8 px-4 max-w-5xl">
       {/* Header */}
       <div className="mb-6">
-        <Button variant="outline" onClick={() => navigate('/my-submissions')} className="mb-4">
+        <Button variant="outline" onClick={() => navigate('/profile')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to My Submissions
         </Button>

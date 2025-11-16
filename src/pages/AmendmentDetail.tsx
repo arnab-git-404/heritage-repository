@@ -175,7 +175,7 @@ const renderFieldValue = (value: any, type: string) => {
           : 'Amendment rejected - Original version preserved'
       );
 
-      navigate('/amendment');
+      navigate('/amendments');
     } catch (error) {
       console.error('Error reviewing amendment:', error);
       alert(error instanceof Error ? error.message : 'Failed to review amendment');
