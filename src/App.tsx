@@ -23,12 +23,14 @@ import Chat from "./pages/Chat";
 import Collaboration from "./pages/Collaboration";
 // import ChatWidget from "./components/ChatWidget";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { ReactLenis, useLenis } from 'lenis/react'
+import { ReactLenis, useLenis } from "lenis/react";
 import Contact from "./pages/Contact";
 import AdminTest from "./pages/AdminTest";
 import AmendmentRequests from "./pages/AmendmentRequest";
 import AmendmentDetail from "./pages/AmendmentDetail";
 import SubmissionDetail from "./pages/SubmissionDetail";
+import Footer from "./components/Footer";
+
 
 const queryClient = new QueryClient();
 
@@ -41,50 +43,50 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
 );
 
 const App = () => (
-  // <QueryClientProvider client={queryClient}>
-    // <TooltipProvider>
-    <>
-    
-      <ReactLenis root />
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/explore" element={<Layout><Explore /></Layout>} />
-            <Route path="/about-us" element={<Layout><About /></Layout>} />
-            <Route path="/login" element={<Layout><Login /></Layout>} />
-            <Route path="/signup" element={<Layout><SignUp /></Layout>} />
-            <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />
-            <Route path="/reset-password" element={<Layout><ResetPassword /></Layout>} />
-            <Route path="/admin/login" element={<AdminLogin />} />
+  <>
+    <ReactLenis root />
+    <Toaster />
+    <Sonner />
+    <AuthProvider>
+      <BrowserRouter>
+        <Navigation />
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/about-us" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/amendments" element={<AmendmentRequests />} />
+          <Route path="/amendments/:id" element={<AmendmentDetail />} />
+          <Route
+            path="/profile/submissions/:id"
+            element={<SubmissionDetail />}
+            />
+
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/upload" element={<Upload />} />
+            {/* <Route path="/chat/:otherUserId" element={<Layout><Chat /></Layout>} /> */}
+            {/* <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} /> */}
+            {/* <Route path="/collaboration" element={<Layout><Collaboration /></Layout>} /> */}
             {/* <Route path="/category/:categoryName" element={<Layout><Category /></Layout>} /> */}
+          </Route>
 
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/contact" element={<Layout><Contact /></Layout>} />
-              <Route path="/amendment" element={<AmendmentRequests />} />
-              <Route path="/amendments/:id" element={<AmendmentDetail />} />
-<Route path="/profile/submissions/:id" element={<SubmissionDetail />} />
-
-            {/* Protected routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/profile" element={<Layout><Profile /></Layout>} />
-              <Route path="/upload" element={<Layout><Upload /></Layout>} />
-              {/* <Route path="/chat/:otherUserId" element={<Layout><Chat /></Layout>} /> */}
-              {/* <Route path="/collaboration" element={<Layout><Collaboration /></Layout>} /> */}
-              {/* <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} /> */}
-            </Route>
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </>
-    //  </TooltipProvider> 
-  // </QueryClientProvider>
+          {/* Catch-all route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </AuthProvider>
+  </>
 );
 
 export default App;

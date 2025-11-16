@@ -259,7 +259,6 @@ const About = () => {
           </div>
         </section>
       </div>
-      <Footer />
     </div>
   );
 };

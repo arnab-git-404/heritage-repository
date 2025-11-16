@@ -1324,7 +1324,6 @@ const [editUserDialogOpen, setEditUserDialogOpen] = useState(false);
         </DialogContent>
       </Dialog>
 
-      <Footer />
     </div>
   );
 };

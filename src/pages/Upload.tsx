@@ -352,6 +352,16 @@ const Upload = () => {
         }
       );
 
+      if (!response.ok && response.status === 413) {
+        toast({
+          title: "Upload Failed",
+          description: "The uploaded file is too large. Please reduce the file size to 10MB and try again.",
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -1256,7 +1266,6 @@ const Upload = () => {
           </form>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

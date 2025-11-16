@@ -78,7 +78,6 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden font-sans leading-relaxed">
-      <Navigation />
 
       {/* Hero Section */}
       <section
@@ -588,7 +587,6 @@ const Landing = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };

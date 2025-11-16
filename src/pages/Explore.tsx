@@ -588,7 +588,6 @@ const Explore = () => {
           )}
         </div>
       </div>
-      <Footer />
 
       {/* Disclaimer Dialog */}
       <AlertDialog open={disclaimerOpen} onOpenChange={setDisclaimerOpen}>
