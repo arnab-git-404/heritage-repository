@@ -21,11 +21,14 @@ import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Chat from "./pages/Chat";
 import Collaboration from "./pages/Collaboration";
-import ChatWidget from "./components/ChatWidget";
+// import ChatWidget from "./components/ChatWidget";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ReactLenis, useLenis } from 'lenis/react'
 import Contact from "./pages/Contact";
-
+import AdminTest from "./pages/AdminTest";
+import AmendmentRequests from "./pages/AmendmentRequest";
+import AmendmentDetail from "./pages/AmendmentDetail";
+import SubmissionDetail from "./pages/SubmissionDetail";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +42,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
 
 const App = () => (
   // <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+    // <TooltipProvider>
+    <>
+    
       <ReactLenis root />
       <Toaster />
       <Sonner />
@@ -55,26 +60,30 @@ const App = () => (
             <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />
             <Route path="/reset-password" element={<Layout><ResetPassword /></Layout>} />
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/category/:categoryName" element={<Layout><Category /></Layout>} />
+            {/* <Route path="/category/:categoryName" element={<Layout><Category /></Layout>} /> */}
+
             <Route path="/admin" element={<Admin />} />
             <Route path="/contact" element={<Layout><Contact /></Layout>} />
-            
+              <Route path="/amendment" element={<AmendmentRequests />} />
+              <Route path="/amendments/:id" element={<AmendmentDetail />} />
+<Route path="/profile/submissions/:id" element={<SubmissionDetail />} />
+
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Layout><Profile /></Layout>} />
               <Route path="/upload" element={<Layout><Upload /></Layout>} />
-              <Route path="/chat/:otherUserId" element={<Layout><Chat /></Layout>} />
-              <Route path="/collaboration" element={<Layout><Collaboration /></Layout>} />
+              {/* <Route path="/chat/:otherUserId" element={<Layout><Chat /></Layout>} /> */}
+              {/* <Route path="/collaboration" element={<Layout><Collaboration /></Layout>} /> */}
               {/* <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} /> */}
             </Route>
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <ChatWidget />
         </BrowserRouter>
       </AuthProvider>
-    </TooltipProvider>
+    </>
+    //  </TooltipProvider> 
   // </QueryClientProvider>
 );
 

@@ -106,6 +106,46 @@ const Upload = () => {
     "Sweden",
     "India",
   ];
+
+  const indianStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry"
+];
+
   const culturalDomains = [
     "Folk Song",
     "Folk Dance",
@@ -425,7 +465,7 @@ const Upload = () => {
                       </Select>
                     </div>
 
-                    <div className="grid gap-2">
+                    {/* <div className="grid gap-2">
                       <Label htmlFor="stateRegion">State / Region *</Label>
                       <Input
                         id="stateRegion"
@@ -433,7 +473,31 @@ const Upload = () => {
                         onChange={(e) => setStateRegion(e.target.value)}
                         placeholder="Enter state or region"
                       />
-                    </div>
+                    </div> */}
+
+  <div className="space-y-2">
+                    <Label htmlFor="stateRegion">State / Region *</Label>
+                    {country === "India" ? (
+                      <Select value={stateRegion} onValueChange={setStateRegion}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px]">
+                          {indianStates.map(state => (
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        id="stateRegion"
+                        value={stateRegion}
+                        onChange={(e) => setStateRegion(e.target.value)}
+                        placeholder="Enter your state/region"
+                        required
+                      />
+                    )}
+                  </div>
 
                     <div className="grid gap-2">
                       <Label htmlFor="tribe">Tribe *</Label>
@@ -485,6 +549,111 @@ const Upload = () => {
                     </div>
                   </div>
                 )}
+
+{/* {currentStep === 1 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Category Selection</CardTitle>
+                <CardDescription>Provide location and cultural details</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="country">Country *</Label>
+                    <Select 
+                      value={country} 
+                      onValueChange={(v) => {
+                        setCountry(v);
+                        setStateRegion(""); // Reset state when country changes
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((c) => (
+                          <SelectItem key={c} value={c}>{c}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="stateRegion">State / Region *</Label>
+                    {country === "India" ? (
+                      <Select value={stateRegion} onValueChange={setStateRegion}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px]">
+                          {indianStates.map(state => (
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        id="stateRegion"
+                        value={stateRegion}
+                        onChange={(e) => setStateRegion(e.target.value)}
+                        placeholder="Enter state/region"
+                        required
+                      />
+                    )}
+                  </div>
+
+                  <div className="grid gap-2">
+                      <Label htmlFor="tribe">Tribe *</Label>
+                      <Input
+                        id="tribe"
+                        value={tribe}
+                        onChange={(e) => setTribe(e.target.value)}
+                        placeholder="Enter tribe name"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="village">Village</Label>
+                      <Input
+                        id="village"
+                        value={village}
+                        onChange={(e) => setVillage(e.target.value)}
+                        placeholder="Enter village name"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="culturalDomain">Cultural Domain *</Label>
+                      <Select
+                        value={culturalDomain}
+                        onValueChange={setCulturalDomain}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select cultural domain" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {culturalDomains.map((d) => (
+                            <SelectItem key={d} value={d}>
+                              {d}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="title">Title of the Material *</Label>
+                      <Input
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Enter a descriptive title"
+                      />
+                    </div>
+                  </div>
+              </CardContent>
+            </Card>
+          )} */}
 
                 {/* STEP 2: Content Description */}
                 {currentStep === 2 && (
