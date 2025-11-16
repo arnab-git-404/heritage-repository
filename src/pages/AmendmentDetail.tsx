@@ -213,7 +213,7 @@ const renderFieldValue = (value: any, type: string) => {
     <div className="container mx-auto py-8 px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-6">
-        <Button variant="outline" onClick={() => navigate('/amendment')} className="mb-4">
+        <Button variant="outline" onClick={() => navigate('/amendments')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Amendments
         </Button>
