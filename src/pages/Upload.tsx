@@ -352,15 +352,7 @@ const Upload = () => {
         }
       );
 
-      if (!response.ok && response.status === 413) {
-        toast({
-          title: "Upload Failed",
-          description: "The uploaded file is too large. Please reduce the file size to 10MB and try again.",
-          variant: "destructive",
-        });
-        setSubmitting(false);
-        return;
-      }
+
 
       const data = await response.json();
 
@@ -378,7 +370,19 @@ const Upload = () => {
       // Navigate to profile to see submissions
       navigate("/profile");
     } catch (error: any) {
+      
+      if (error.message.includes("413")) {
+        toast({
+          title: "Upload Failed",
+          description: "The uploaded file is too large. Please reduce the file size to 10MB and try again.",
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
       console.error("Upload error:", error);
+
       toast({
         title: "Upload Failed",
         description: error.message || "An error occurred during upload.",
