@@ -224,8 +224,8 @@ const Upload = () => {
       case 3:
         if (!contentFile || (contentFileType !== "image" && !language) ) {
           toast({
-            title: "Missing Content File",
-            description: "Please upload a content file.",
+            title: "Missing Required Fields",
+            description: "Please upload a content file & select language.",
             variant: "destructive",
           });
           return false;
@@ -276,6 +276,30 @@ const Upload = () => {
       });
       return;
     }
+
+
+  // ✅ VALIDATE FILE SIZES BEFORE UPLOADING
+  const filesToCheck = [
+    { file: contentFile, name: "Content file" },
+    { file: consentFile, name: "Consent file" },
+    { file: translationFile, name: "Translation file" },
+    { file: verificationDoc, name: "Verification document" },
+  ];
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+  for (const { file, name } of filesToCheck) {
+    if (file && file.size > MAX_FILE_SIZE) {
+      toast({
+        title: "File Too Large",
+        description: `${name} exceeds the maximum size limit of 10MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB. Please compress the file and try again.`,
+        variant: "destructive",
+      });
+      return;
+    }
+  }
+
+
 
     setSubmitting(true);
 
