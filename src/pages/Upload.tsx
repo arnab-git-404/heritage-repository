@@ -352,42 +352,153 @@ const Upload = () => {
         }
       );
 
-
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.errors?.[0]?.msg || "Submission failed");
-      }
-
-      toast({
-        title: "Success!",
-        description:
-          "Your submission has been uploaded successfully and is pending review.",
-        variant: "default",
-      });
-
-      // Navigate to profile to see submissions
-      navigate("/profile");
-    } catch (error: any) {
-      
-      if (error.message.includes("413")) {
+    // Handle specific HTTP status codes
+    if (!response.ok) {
+      // 413 - Payload Too Large (File too big)
+      if (response.status === 413) {
         toast({
-          title: "Upload Failed",
-          description: "The uploaded file is too large. Please reduce the file size to 10MB and try again.",
+          title: "File Too Large",
+          description:
+            "One or more files exceed the maximum size limit (100MB per file). Please compress your files and try again.",
           variant: "destructive",
         });
         setSubmitting(false);
         return;
       }
 
-      console.error("Upload error:", error);
+      // 401 - Unauthorized
+      if (response.status === 401) {
+        toast({
+          title: "Authentication Required",
+          description: "Your session has expired. Please log in again.",
+          variant: "destructive",
+        });
+        navigate("/login?redirect=/upload");
+        setSubmitting(false);
+        return;
+      }
+
+      // 403 - Forbidden
+      if (response.status === 403) {
+        toast({
+          title: "Access Denied",
+          description:
+            "You don't have permission to upload content. Please verify your account.",
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      // 400 - Bad Request (Validation errors)
+      if (response.status === 400) {
+        const data = await response.json();
+        const errorMessage =
+          data?.errors?.[0]?.msg ||
+          data?.message ||
+          "Please check your form and try again.";
+        toast({
+          title: "Validation Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      // 415 - Unsupported Media Type
+      if (response.status === 415) {
+        toast({
+          title: "Invalid File Type",
+          description:
+            "One or more files have an unsupported format. Please check file types and try again.",
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      // 500 - Internal Server Error
+      if (response.status === 500) {
+        const data = await response.json();
+        toast({
+          title: "Server Error",
+          description:
+            data?.message ||
+            "Something went wrong on our end. Please try again later.",
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      // 503 - Service Unavailable
+      if (response.status === 503) {
+        toast({
+          title: "Service Unavailable",
+          description:
+            "The server is temporarily unavailable. Please try again in a few minutes.",
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      // Generic error for other status codes
+      const data = await response.json();
+      throw new Error(
+        data?.errors?.[0]?.msg || data?.message || "Submission failed"
+      );
+    }
+
+      const data = await response.json();
 
       toast({
-        title: "Upload Failed",
-        description: error.message || "An error occurred during upload.",
+        title: "Success!",
+        description:
+          "Your submission has been uploaded successfully and is pending review.",
+        variant: "success",
+      });
+
+      // Navigate to profile to see submissions
+      navigate("/profile");
+    } catch (error: any) {
+      console.error("Upload error:", error);
+
+      // Network errors (no internet, CORS, etc.)
+    if (error.message === "Failed to fetch" || error.name === "TypeError") {
+      toast({
+        title: "Network Error",
+        description:
+          "Unable to connect to the server. Please check your internet connection and try again.",
         variant: "destructive",
       });
+      setSubmitting(false);
+      return;
+    }
+
+    // Timeout errors
+    if (error.name === "AbortError") {
+      toast({
+        title: "Request Timeout",
+        description:
+          "The upload took too long. This might be due to large file sizes or slow connection. Please try again.",
+        variant: "destructive",
+      });
+      setSubmitting(false);
+      return;
+    }
+
+    // Generic error fallback
+    toast({
+      title: "Upload Failed",
+      description:
+        error.message ||
+        "An unexpected error occurred. Please try again or contact support.",
+      variant: "destructive",
+    });
+     
+
     } finally {
       setSubmitting(false);
     }
@@ -885,6 +996,7 @@ const Upload = () => {
 
                     <div className="grid gap-2">
                       <Label htmlFor="contentFile">Upload File *</Label>
+                      <Label className="text-red-700">Supported Max File Size: 10MB</Label>
                       <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors">
                         <Input
                           id="contentFile"

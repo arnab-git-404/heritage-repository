@@ -2414,8 +2414,8 @@ export const EditSubmissionModal = ({
                             ? "Click to replace main content file"
                             : "Click to upload main content file"}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Max file size: 100MB
+                        <p className="text-xs text-red-700 mt-1">
+                          Max file size: 10MB
                         </p>
                       </>
                     )}
