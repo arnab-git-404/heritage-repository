@@ -212,7 +212,7 @@ export default function SubmissionDetail() {
   const ContentIcon = getContentIcon(submission.contentFileType);
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-5xl">
+    <div className="container mx-auto py-8 px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-6">
         <Button variant="outline" onClick={() => navigate('/profile')} className="mb-4">
