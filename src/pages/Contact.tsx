@@ -76,8 +76,7 @@ export default function Contact() {
                   <Mail className="h-5 w-5 mt-1 text-primary" />
                   <div>
                     <h3 className="font-semibold">Email</h3>
-                    <p className="text-muted-foreground">info@heritage-repository.com</p>
-                    <p className="text-muted-foreground">support@heritage-repository.com</p>
+                    <p className="text-muted-foreground">moamen2lkr@gmail.com </p>
                   </div>
                 </div>
 
@@ -85,22 +84,59 @@ export default function Contact() {
                   <Phone className="h-5 w-5 mt-1 text-primary" />
                   <div>
                     <h3 className="font-semibold">Phone</h3>
-                    <p className="text-muted-foreground">+1 (555) 123-4567</p>
-                    <p className="text-sm text-muted-foreground">Mon-Fri, 9am-5pm EST</p>
+                    <p className="text-muted-foreground">+91 977510xxxx</p>
+                    <p className="text-sm text-muted-foreground">Mon-Fri, 9am-5pm IST</p>
                   </div>
                 </div>
 
+
                 <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 mt-1 text-primary" />
-                  <div>
-                    <h3 className="font-semibold">Address</h3>
-                    <p className="text-muted-foreground">
-                      123 Heritage Lane<br />
-                      History District<br />
-                      City, State 12345
-                    </p>
-                  </div>
-                </div>
+  <MapPin className="h-5 w-5 mt-1 text-primary" />
+  <div className="w-full">
+    <h3 className="font-semibold">Address</h3>
+    <p className="text-muted-foreground mb-3">
+      CHRIST (Deemed to be University)<br/>
+      VHHW+48F, Bannerghatta Rd, Pai Layout<br/>
+      Hulimavu, Bengaluru,<br/> 
+      Karnataka 560076
+    </p>
+    
+    {/* Embedded Map */}
+ <div className="mt-3 rounded-lg overflow-hidden border">
+  <iframe
+
+src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3737.5324816772254!2d77.5932245748913!3d12.877813287428994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1532a4bd03d5%3A0x315589772baa7a26!2sChrist%20University%20Bannerghatta%20Road%20Campus!5e1!3m2!1sen!2sin!4v1763659632332!5m2!1sen!2sin" 
+
+    width="100%"
+    height="300"
+    className="w-full h-[300px] sm:h-[200px] md:h-[250px]"
+    style={{ border: 0 }}
+    allowFullScreen
+    loading="lazy"
+    referrerPolicy="no-referrer-when-downgrade"
+    title="CHRIST University Location"
+  />
+</div>
+    
+
+
+
+    {/* Optional: View in Maps button */}
+    <Button
+      variant="outline"
+      size="sm"
+      className="mt-3 w-full"
+      onClick={() => window.open(
+      
+        "https://maps.google.com/maps?ll=12.877813,77.5958&z=15&t=h&hl=en&gl=IN&mapclient=embed&cid=3554898625805580838",
+        "_blank"
+      )}
+    >
+      <MapPin className="h-3 w-3 mr-2" />
+      Open in Google Maps
+    </Button>
+  </div>
+</div>
 
                 <div className="flex items-start gap-3">
                   <Clock className="h-5 w-5 mt-1 text-primary" />
