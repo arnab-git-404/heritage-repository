@@ -1,5 +1,3 @@
-
-
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CardDescription, CardTitle } from "@/components/ui/card";
@@ -31,7 +29,8 @@ import {
   Music,
   Video,
   Image as ImageIcon,
-  X
+  X,
+  RefreshCw,
 } from "lucide-react";
 
 const culturalDomains = [
@@ -99,6 +98,91 @@ interface ApprovedContent {
   createdAt: string;
 }
 
+interface CachedData {
+  items: ApprovedContent[];
+  timestamp: number;
+  filters: {
+    tribe: string;
+    culturalDomain: string;
+    country: string;
+    stateRegion: string;
+    village: string;
+    accessTier: string;
+    q: string;
+    sort: string;
+  };
+}
+
+const CACHE_KEY = 'approved_content_cache';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+
+const getCacheKey = (filters: any) => {
+  return `${CACHE_KEY}_${JSON.stringify(filters)}`;
+};
+
+const getFromCache = (filters: any): ApprovedContent[] | null => {
+  try {
+    const cacheKey = getCacheKey(filters);
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (!cached) return null;
+    
+    const data: CachedData = JSON.parse(cached);
+    const now = Date.now();
+    
+    // Check if cache is expired
+    if (now - data.timestamp > CACHE_DURATION) {
+      localStorage.removeItem(cacheKey);
+      return null;
+    }
+    
+    // Verify filters match
+    if (JSON.stringify(data.filters) !== JSON.stringify(filters)) {
+      return null;
+    }
+    
+    return data.items;
+  } catch (error) {
+    console.error('Cache read error:', error);
+    return null;
+  }
+};
+
+const saveToCache = (items: ApprovedContent[], filters: any) => {
+  try {
+    const cacheKey = getCacheKey(filters);
+    const data: CachedData = {
+      items,
+      timestamp: Date.now(),
+      filters,
+    };
+    
+    localStorage.setItem(cacheKey, JSON.stringify(data));
+    
+    // Clean old cache entries (keep only last 10)
+    const allKeys = Object.keys(localStorage).filter(k => k.startsWith(CACHE_KEY));
+    if (allKeys.length > 10) {
+      allKeys.slice(0, allKeys.length - 10).forEach(key => {
+        localStorage.removeItem(key);
+      });
+    }
+  } catch (error) {
+    console.error('Cache write error:', error);
+    // If localStorage is full, clear old caches
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      clearOldCaches();
+    }
+  }
+};
+
+const clearOldCaches = () => {
+  const allKeys = Object.keys(localStorage).filter(k => k.startsWith(CACHE_KEY));
+  allKeys.forEach(key => localStorage.removeItem(key));
+};
+
+
+
 const Explore = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<ApprovedContent[]>([]);
@@ -109,6 +193,7 @@ const Explore = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [openItem, setOpenItem] = useState<ApprovedContent | null>(null);
   const [openConsentId, setOpenConsentId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const q = searchParams.get("q") || "";
   const tribe = searchParams.get("tribe") || "";
@@ -146,47 +231,64 @@ const Explore = () => {
     setSearchParams(next, { replace: true });
   };
 
-  // Fetch approved content
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  // Fetch approved content WITHOUT caching
+  // useEffect(() => {
+  //   let active = true;
+  //   (async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
 
-        const qs = new URLSearchParams();
-        if (tribe) qs.set("tribe", tribe);
-        if (culturalDomain) qs.set("culturalDomain", culturalDomain);
-        if (country) qs.set("country", country);
-        if (stateRegion) qs.set("state", stateRegion);
-        if (village) qs.set("village", village);
-        if (accessTier) qs.set("accessTier", accessTier);
-        if (q) qs.set("q", q);
-        if (sort) qs.set("sort", sort);
+  //       const qs = new URLSearchParams();
+  //       if (tribe) qs.set("tribe", tribe);
+  //       if (culturalDomain) qs.set("culturalDomain", culturalDomain);
+  //       if (country) qs.set("country", country);
+  //       if (stateRegion) qs.set("state", stateRegion);
+  //       if (village) qs.set("village", village);
+  //       if (accessTier) qs.set("accessTier", accessTier);
+  //       if (q) qs.set("q", q);
+  //       if (sort) qs.set("sort", sort);
 
-        const res = await fetch(`${API_URL}/api/approved?${qs.toString()}`);
-        const data = await res.json();
+  //       const res = await fetch(`${API_URL}/api/approved?${qs.toString()}`);
+  //       const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data?.errors?.[0]?.msg || "Failed to load content");
-        }
+  //       if (!res.ok) {
+  //         throw new Error(data?.errors?.[0]?.msg || "Failed to load content");
+  //       }
 
-        if (active) {
-          setItems(Array.isArray(data) ? data : []);
-        }
-      } catch (e: any) {
-        if (active) {
-          console.error("Fetch error:", e);
-          setError(e.message || "Failed to load content");
-        }
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, [
+  //       if (active) {
+  //         setItems(Array.isArray(data) ? data : []);
+  //       }
+  //     } catch (e: any) {
+  //       if (active) {
+  //         console.error("Fetch error:", e);
+  //         setError(e.message || "Failed to load content");
+  //       }
+  //     } finally {
+  //       if (active) setLoading(false);
+  //     }
+  //   })();
+  //   return () => {
+  //     active = false;
+  //   };
+  // }, [
+  //   tribe,
+  //   culturalDomain,
+  //   country,
+  //   stateRegion,
+  //   village,
+  //   accessTier,
+  //   q,
+  //   sort,
+  // ]);
+
+
+
+  // Fetch approved content WITH caching
+useEffect(() => {
+  let active = true;
+  
+  const filters = {
     tribe,
     culturalDomain,
     country,
@@ -195,7 +297,77 @@ const Explore = () => {
     accessTier,
     q,
     sort,
-  ]);
+  };
+  
+  (async () => {
+    try {
+      // ✅ STEP 1: Try to get from cache first
+      const cached = getFromCache(filters);
+      
+      if (cached && active) {
+        console.log('📦 Using cached data');
+        setItems(cached);
+        setLoading(false);
+        return;
+      }
+      
+      // ✅ STEP 2: If no cache, fetch from API
+      console.log('🌐 Fetching fresh data');
+      setLoading(true);
+      setError(null);
+
+      const qs = new URLSearchParams();
+      if (tribe) qs.set("tribe", tribe);
+      if (culturalDomain) qs.set("culturalDomain", culturalDomain);
+      if (country) qs.set("country", country);
+      if (stateRegion) qs.set("state", stateRegion);
+      if (village) qs.set("village", village);
+      if (accessTier) qs.set("accessTier", accessTier);
+      if (q) qs.set("q", q);
+      if (sort) qs.set("sort", sort);
+
+      const res = await fetch(`${API_URL}/api/approved?${qs.toString()}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.errors?.[0]?.msg || "Failed to load content");
+      }
+
+      const items = Array.isArray(data) ? data : [];
+      
+      if (active) {
+        setItems(items);
+        // ✅ STEP 3: Save to cache
+        saveToCache(items, filters);
+      }
+    } catch (e: any) {
+      if (active) {
+        console.error("Fetch error:", e);
+        setError(e.message || "Failed to load content");
+      }
+    } finally {
+      if (active) {
+        setRefreshing(false);
+        setLoading(false);
+      }
+    }
+  })();
+  
+  return () => {
+    active = false;
+  };
+}, [
+  tribe,
+  culturalDomain,
+  country,
+  stateRegion,
+  village,
+  accessTier,
+  q,
+  sort,
+  refreshing,
+]);
+
 
   const filtered = useMemo(() => {
     return items;
@@ -243,8 +415,6 @@ const Explore = () => {
     } catch (error) {
       console.error("Failed to track download:", error);
     }
-
-
   };
 
   const renderFileIcon = (fileType: string) => {
@@ -321,7 +491,7 @@ const Explore = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans leading-relaxed">
       <div className="flex-1 py-6 md:py-8 px-4">
-        <div className="container mx-auto max-w-7xl">
+        <div className=" mx-auto max-w-7xl">
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl md:text-4xl font-heading font-bold text-primary">
@@ -436,7 +606,22 @@ const Explore = () => {
               </Select>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-between items-center">
+              <Button
+    variant="ghost"
+    size="sm"
+    onClick={() => {
+      clearOldCaches();
+      // window.location.reload();
+      setRefreshing(true);
+
+    }}
+  >
+  <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+
+    🔄 Refresh Data
+  </Button>
+
               <Button
                 variant="outline"
                 onClick={() => setSearchParams({}, { replace: true })}
@@ -474,7 +659,7 @@ const Explore = () => {
                   className="group w-full text-left rounded-xl overflow-hidden border bg-card hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {/* Thumbnail */}
-                  <div className="relative h-48 bg-muted overflow-hidden">
+                  <div className="relative h-48  overflow-hidden">
                     {renderThumbnail(item)}
 
                     {/* Overlay on hover */}
@@ -548,6 +733,29 @@ const Explore = () => {
                             +{item.keywords.length - 3} more
                           </span>
                         )}
+
+                        <Button
+                          variant="outline"
+                          className="border-2 rounded-2xl"
+                          size="sm"
+                          onClick={() =>
+                            setOpenConsentId(
+                              openConsentId === item._id ? null : item._id
+                            )
+                          }
+                        >
+                          {openConsentId === item._id ? (
+                            <>
+                              <X className="h-4 w-4 mr-2" />
+                              Hide Consent
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="h-4 w-4 mr-2" />
+                              View Consent
+                            </>
+                          )}
+                        </Button>
                       </div>
                     )}
 
@@ -639,13 +847,9 @@ const Explore = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-
-    
       {/* Preview Modal */}
- <AlertDialog open={previewOpen} onOpenChange={setPreviewOpen}>
-
+      <AlertDialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <AlertDialogContent className="max-w-4xl max-h-[90vh] overflow-x-auto">
-          
           <AlertDialogHeader>
             <AlertDialogTitle className="text-2xl">
               {openItem?.title}
@@ -656,11 +860,13 @@ const Explore = () => {
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              
-              setPreviewOpen(false) , handleView(openItem)}
-              
-            }>
+            <AlertDialogCancel
+              onClick={() => {
+                setOpenConsentId(null),
+                  setPreviewOpen(false),
+                  handleView(openItem);
+              }}
+            >
               Close
             </AlertDialogCancel>
             {openItem?.contentUrl && (
@@ -687,7 +893,7 @@ const Explore = () => {
                 />
               )}
               {openItem?.contentFileType === "audio" && (
-                <div className="p-8 bg-muted flex items-center justify-center">
+                <div className="p-8 border flex items-center justify-center">
                   <audio
                     src={openItem.contentUrl}
                     controls
@@ -779,7 +985,7 @@ const Explore = () => {
 
             {/* Cultural Significance */}
             {openItem?.culturalSignificance && (
-              <div className="p-4 bg-muted rounded-lg">
+              <div className="p-4 border rounded-lg">
                 <h4 className="font-semibold mb-2">Cultural Significance</h4>
                 <p className="text-sm text-muted-foreground">
                   {openItem.culturalSignificance}
@@ -789,11 +995,153 @@ const Explore = () => {
 
             {/* Background Info */}
             {openItem?.backgroundInfo && (
-              <div className="p-4 bg-muted rounded-lg">
+              <div className="p-4 border rounded-lg">
                 <h4 className="font-semibold mb-2">Background Information</h4>
                 <p className="text-sm text-muted-foreground">
                   {openItem.backgroundInfo}
                 </p>
+              </div>
+            )}
+
+            {/* 🎯 ADD CONSENT SECTION HERE */}
+            {openItem?.consent && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold text-base">
+                    Consent Information
+                  </h4>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      setOpenConsentId(
+                        openConsentId === openItem._id ? null : openItem._id
+                      )
+                    }
+                  >
+                    {openConsentId === openItem._id ? (
+                      <>
+                        <X className="h-4 w-4 mr-2" />
+                        Hide Consent
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Consent
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {openConsentId === openItem._id && (
+                  <div className="border rounded-lg p-3 sm:p-4 bg-blue-50 dark:bg-blue-950 space-y-3">
+                    {/* Consent File Preview */}
+                    <div className="rounded-lg overflow-hidden border bg-white">
+                      {openItem.consent.fileType === "pdf" && (
+                        <div className="space-y-2">
+                          <iframe
+                            src={`${openItem.consent.fileUrl}#toolbar=1&navpanes=0&scrollbar=1`}
+                            title="Consent Document"
+                            className="w-full h-[300px] sm:h-[400px] border-0"
+                            loading="lazy"
+                          />
+                          <div className="flex justify-center p-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                window.open(openItem.consent.fileUrl, "_blank")
+                              }
+                            >
+                              <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                              Open in New Tab
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                      {openItem.consent.fileType === "audio" && (
+                        <div className="p-4 sm:p-6 flex items-center justify-center">
+                          <audio
+                            src={openItem.consent.fileUrl}
+                            controls
+                            className="w-full max-w-md"
+                          />
+                        </div>
+                      )}
+                      {openItem.consent.fileType === "video" && (
+                        <video
+                          src={openItem.consent.fileUrl}
+                          controls
+                          className="w-full max-h-[400px]"
+                        />
+                      )}
+                    </div>
+
+                    {/* Consent Details - Responsive Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                      <div className="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded">
+                        <span className="font-semibold text-blue-900 dark:text-blue-300">
+                          Type:
+                        </span>
+                        <p className="text-muted-foreground mt-1">
+                          {openItem.consent.consentType}
+                        </p>
+                      </div>
+                      <div className="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded">
+                        <span className="font-semibold text-blue-900 dark:text-blue-300">
+                          Consenting Person(s):
+                        </span>
+                        <p className="text-muted-foreground mt-1">
+                          {openItem.consent.consentNames}
+                        </p>
+                      </div>
+                      <div className="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded">
+                        <span className="font-semibold text-blue-900 dark:text-blue-300">
+                          Date:
+                        </span>
+                        <p className="text-muted-foreground mt-1">
+                          {new Date(
+                            openItem.consent.consentDate
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded">
+                        <span className="font-semibold text-blue-900 dark:text-blue-300">
+                          Duration:
+                        </span>
+                        <p className="text-muted-foreground mt-1 capitalize">
+                          {openItem.consent.duration}
+                        </p>
+                      </div>
+                      <div className="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded col-span-1 sm:col-span-2">
+                        <span className="font-semibold text-blue-900 dark:text-blue-300">
+                          Permissions:
+                        </span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {openItem.consent.permissionType.map((perm, idx) => (
+                            <Badge
+                              key={idx}
+                              variant="outline"
+                              className="text-[10px] sm:text-xs"
+                            >
+                              {perm}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      {openItem.consent.digitalSignature && (
+                        <div className="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded col-span-1 sm:col-span-2">
+                          <span className="font-semibold text-blue-900 dark:text-blue-300">
+                            Digital Signature:
+                          </span>
+                          <p className="text-muted-foreground mt-1 break-all">
+                            {openItem.consent.digitalSignature}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -850,7 +1198,6 @@ const Explore = () => {
           </AlertDialogFooter> */}
         </AlertDialogContent>
       </AlertDialog>
-
     </div>
   );
 };
