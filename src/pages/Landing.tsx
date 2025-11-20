@@ -123,8 +123,8 @@ const Landing = () => {
             <h1 className="font-body uppercase tracking-[0.08em] text-primary-foreground dark:text-primary text-4xl md:text-6xl lg:text-7xl leading-[1.1] font-semibold">
               Heritage Repository
             </h1>
-            <h2 className="font-body uppercase tracking-[0.22em] text-primary-foreground/95 dark:text-primary text-lg md:text-2xl lg:text-3xl mt-1 font-medium">
-              Consent-Based, Tiered Digital Archive
+            <h2 className="font-body uppercase tracking-[0.22em] text-primary-foreground/95 dark:text-primary text-lg md:text-2xl lg:text-3xl mt-1 font-medium">              
+              {'Consent Based, Tiered Digital Archive (CBT Heritage Repsoitory)'}
             </h2>
             <p className="text-primary-foreground/90 text-sm md:text-base dark:text-primary max-w-[55ch] mt-5">
               Safeguarding heritage — ethically and authentically. Discover,
