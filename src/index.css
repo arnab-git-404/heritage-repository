@@ -144,3 +144,8 @@ All colors MUST be HSL.
     border-radius: 9999px;
   }
 }
+
+::view-transition-old(root), ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
