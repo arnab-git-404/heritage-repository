@@ -156,26 +156,7 @@ const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, logout, user } = useAuth();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  // Initialize theme from localStorage or system preference
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    const initialTheme = savedTheme || systemTheme;
-    
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("light", initialTheme === "light");
-  }, []);
-
-  // Toggle theme
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
 
   const navItems = [
     { name: "Home", path: "/", icon: Home },
@@ -254,11 +235,11 @@ const Navigation = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                  <DropdownMenuItem onClick={() => navigate('/user/dashboard')}>
                     <User className="h-4 w-4 mr-2" />
-                    Profile
+                    Dashboard
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/upload')}>
+                  <DropdownMenuItem onClick={() => navigate('/user/dashboard/upload')}>
                     <Upload className="h-4 w-4 mr-2" />
                     Upload Content
                   </DropdownMenuItem>
@@ -284,18 +265,7 @@ const Navigation = () => {
           {/* Mobile Menu */}
           <div className="flex md:hidden items-center space-x-2">
             {/* Mobile Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? (
-                <Moon className="h-5 w-5" />
-              ) : (
-                <Sun className="h-5 w-5" />
-              )}
-            </Button>
+           <AnimatedThemeToggler />
 
             {/* Mobile Menu Trigger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -345,10 +315,10 @@ const Navigation = () => {
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => handleNavClick('/profile')}
+                          onClick={() => handleNavClick('/user/dashboard')}
                         >
                           <User className="h-4 w-4 mr-3" />
-                          Profile
+                          Dashboard
                         </Button>
                         <Button
                           variant="ghost"
