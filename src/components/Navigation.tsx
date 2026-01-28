@@ -181,7 +181,7 @@ const Navigation = () => {
     { name: "Home", path: "/", icon: Home },
     { name: "Explore", path: "/explore", icon: Compass },
     { name: "About Us", path: "/about-us", icon: Info },
-    { name: "Upload", path: "/upload", icon: Upload },
+    { name: "Upload", path: "/user/dashboard/upload", icon: Upload },
     { name: "Contact", path: "/contact", icon: Mail }
   ];
 
