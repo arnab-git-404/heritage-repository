@@ -2094,7 +2094,7 @@ const MySubmissions = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/user/dashboard")}
                 className="mb-2 -ml-2"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />

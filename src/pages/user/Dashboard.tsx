@@ -928,8 +928,6 @@
 
 //                                     item.amendmentStatus.pending  === null ? 'secondary' :
 
-                          
-
 //                                     }
 //                                 >
 //                                   {item.status}
@@ -1032,10 +1030,6 @@
 
 // export default Profile;
 
-
-
-
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -1113,17 +1107,20 @@ interface UserProfile {
   country?: string;
   tribe?: string;
   avatar?: string;
+  bio?: string;
   createdAt: string;
 }
 
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   const [user, setUser] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [recentSubmissions, setRecentSubmissions] = useState<RecentSubmission[]>([]);
+  const [recentSubmissions, setRecentSubmissions] = useState<
+    RecentSubmission[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -1154,7 +1151,9 @@ const Dashboard = () => {
       const submissionsRes = await authFetch("/api/submissions/my?limit=5");
       const submissionsData = await submissionsRes.json();
       if (submissionsRes.ok) {
-        setRecentSubmissions(Array.isArray(submissionsData) ? submissionsData : []);
+        setRecentSubmissions(
+          Array.isArray(submissionsData) ? submissionsData : [],
+        );
       }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -1200,7 +1199,7 @@ const Dashboard = () => {
     if (user.country) completed++;
     if (user.tribe) completed++;
     if (user.avatar) completed++;
-    // Bio check would need to be added to user object
+    if (user.bio) completed++;
 
     return Math.round((completed / total) * 100);
   };
@@ -1211,7 +1210,9 @@ const Dashboard = () => {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Authentication Required</CardTitle>
-            <CardDescription>Please log in to view your dashboard.</CardDescription>
+            <CardDescription>
+              Please log in to view your dashboard.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => navigate("/signup")} className="w-full">
@@ -1223,20 +1224,22 @@ const Dashboard = () => {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <div className="text-center space-y-3">
+  //         <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+  //         <p className="text-muted-foreground">Loading dashboard...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen py-8 bg-gradient-to-b from-background to-muted/20">
-      <div className="px-4 mx-auto max-w-7xl space-y-8">
+      {/* <div className="px-4 mx-auto space-y-8"> */}
+      <div className="container mx-auto px-4 space-y-6 ">
         {/* Welcome Section */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -1247,12 +1250,18 @@ const Dashboard = () => {
               Here's what's happening with your cultural heritage content
             </p>
           </div>
-          <AnimatedThemeToggler />
 
-          <Button onClick={() => navigate("/user/dashboard/upload")} size="lg">
-            <Upload className="h-5 w-5 mr-2" />
-            Upload New Content
-          </Button>
+          <div className="space-x-6 flex items-center ">
+            <Button
+              onClick={() => navigate("/user/dashboard/upload")}
+              
+            >
+              <Upload className="h-5 w-5 mr-2" />
+              Upload
+            </Button>
+            <Button onClick={logout}>Logout</Button>
+            <AnimatedThemeToggler />
+          </div>
         </div>
 
         {/* Quick Stats Grid */}
@@ -1260,11 +1269,15 @@ const Dashboard = () => {
           {/* Total Submissions */}
           <Card className="hover:shadow-lg transition-shadow border-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Submissions
+              </CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats?.totalSubmissions || 0}</div>
+              <div className="text-2xl font-bold">
+                {stats?.totalSubmissions || 0}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">
                 All your content uploads
               </p>
@@ -1288,21 +1301,27 @@ const Dashboard = () => {
           {/* Pending */}
           <Card className="hover:shadow-lg transition-shadow border-yellow-200 ">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Pending Review
+              </CardTitle>
               <Clock className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-yellow-700">
                 {stats?.pendingSubmissions || 0}
               </div>
-              <p className="text-xs text-yellow-600 mt-1">Awaiting admin approval</p>
+              <p className="text-xs text-yellow-600 mt-1">
+                Awaiting admin approval
+              </p>
             </CardContent>
           </Card>
 
           {/* Total Engagement */}
           <Card className="hover:shadow-lg transition-shadow border-blue-200 ">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Engagement</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Engagement
+              </CardTitle>
               <Activity className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
@@ -1336,7 +1355,9 @@ const Dashboard = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <CardTitle className="text-lg">Profile Completion</CardTitle>
+                      <CardTitle className="text-lg">
+                        Profile Completion
+                      </CardTitle>
                       <CardDescription>
                         Complete your profile to unlock all features
                       </CardDescription>
@@ -1363,7 +1384,10 @@ const Dashboard = () => {
                         : "Keep going!"}
                     </span>
                   </div>
-                  <Progress value={calculateCompletionPercentage()} className="h-2" />
+                  <Progress
+                    value={calculateCompletionPercentage()}
+                    className="h-2"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -1408,8 +1432,12 @@ const Dashboard = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-xl">Recent Submissions</CardTitle>
-                    <CardDescription>Your latest uploads and their status</CardDescription>
+                    <CardTitle className="text-xl">
+                      Recent Submissions
+                    </CardTitle>
+                    <CardDescription>
+                      Your latest uploads and their status
+                    </CardDescription>
                   </div>
                   <Button
                     variant="ghost"
@@ -1446,17 +1474,21 @@ const Dashboard = () => {
                           navigate(`/profile/submissions/${submission._id}`)
                         }
                       >
-                        <div className="mt-1">{getStatusIcon(submission.status)}</div>
+                        <div className="mt-1">
+                          {getStatusIcon(submission.status)}
+                        </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
-                            <h4 className="font-semibold truncate">{submission.title}</h4>
+                            <h4 className="font-semibold truncate">
+                              {submission.title}
+                            </h4>
                             <Badge
                               variant={
                                 submission.status === "approved"
                                   ? "default"
                                   : submission.status === "pending"
-                                  ? "secondary"
-                                  : "destructive"
+                                    ? "secondary"
+                                    : "destructive"
                               }
                               className="shrink-0"
                             >
@@ -1481,8 +1513,8 @@ const Dashboard = () => {
                                 <>
                                   <span>•</span>
                                   <span className="flex items-center gap-1">
-                                    <History className="h-3 w-3" />
-                                    v{submission.amendmentStatus.currentVersion}
+                                    <History className="h-3 w-3" />v
+                                    {submission.amendmentStatus.currentVersion}
                                   </span>
                                 </>
                               )}
@@ -1512,45 +1544,52 @@ const Dashboard = () => {
           {/* Right Column - 1/3 width */}
           <div className="space-y-6">
             {/* Amendment Status */}
-            {stats && (stats.pendingAmendments > 0 || stats.approvedAmendments > 0) && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <History className="h-4 w-4" />
-                    Amendment Activity
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {stats.pendingAmendments > 0 && (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-yellow-600" />
-                        <span className="text-sm">Pending</span>
+            {stats &&
+              (stats.pendingAmendments > 0 || stats.approvedAmendments > 0) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <History className="h-4 w-4" />
+                      Amendment Activity
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {stats.pendingAmendments > 0 && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-yellow-600" />
+                          <span className="text-sm">Pending</span>
+                        </div>
+                        <Badge variant="secondary">
+                          {stats.pendingAmendments}
+                        </Badge>
                       </div>
-                      <Badge variant="secondary">{stats.pendingAmendments}</Badge>
-                    </div>
-                  )}
-                  {stats.approvedAmendments > 0 && (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        <span className="text-sm">Approved</span>
+                    )}
+                    {stats.approvedAmendments > 0 && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          <span className="text-sm">Approved</span>
+                        </div>
+                        <Badge variant="outline">
+                          {stats.approvedAmendments}
+                        </Badge>
                       </div>
-                      <Badge variant="outline">{stats.approvedAmendments}</Badge>
-                    </div>
-                  )}
-                  {stats.rejectedAmendments > 0 && (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <XCircle className="h-4 w-4 text-red-600" />
-                        <span className="text-sm">Rejected</span>
+                    )}
+                    {stats.rejectedAmendments > 0 && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <XCircle className="h-4 w-4 text-red-600" />
+                          <span className="text-sm">Rejected</span>
+                        </div>
+                        <Badge variant="destructive">
+                          {stats.rejectedAmendments}
+                        </Badge>
                       </div>
-                      <Badge variant="destructive">{stats.rejectedAmendments}</Badge>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
             {/* Quick Actions */}
             <Card>
@@ -1561,7 +1600,7 @@ const Dashboard = () => {
                 <Button
                   variant="outline"
                   className="w-full justify-start"
-                  onClick={() => navigate("/upload")}
+                  onClick={() => navigate("/user/dashboard/upload")}
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Upload New Content
@@ -1569,7 +1608,7 @@ const Dashboard = () => {
                 <Button
                   variant="outline"
                   className="w-full justify-start"
-                  onClick={() => navigate("/profile?tab=submissions")}
+                  onClick={() => navigate("/user/dashboard/submissions")}
                 >
                   <FileText className="h-4 w-4 mr-2" />
                   View All Submissions
@@ -1577,7 +1616,7 @@ const Dashboard = () => {
                 <Button
                   variant="outline"
                   className="w-full justify-start"
-                  onClick={() => navigate("/profile")}
+                  onClick={() => navigate("/user/dashboard/profile")}
                 >
                   <User className="h-4 w-4 mr-2" />
                   Edit Profile
@@ -1605,7 +1644,9 @@ const Dashboard = () => {
                 <Separator />
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Country</span>
-                  <span className="font-medium">{user?.country || "Not Set"}</span>
+                  <span className="font-medium">
+                    {user?.country || "Not Set"}
+                  </span>
                 </div>
               </CardContent>
             </Card>
