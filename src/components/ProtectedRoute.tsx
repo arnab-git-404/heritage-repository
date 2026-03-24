@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 
-export default function ProtectedRoute() {
+export default function ProtectedRoute( { children }: PropsWithChildren ) {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);

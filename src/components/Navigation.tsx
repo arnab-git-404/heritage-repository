@@ -1,186 +1,23 @@
-// import { Link, useLocation, useNavigate } from "react-router-dom";
-// import { useEffect, useState } from "react";
-// import { cn } from "@/lib/utils";
-// import { useAuth } from "@/context/AuthContext";
-
-// const Navigation = () => {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const { isAuthenticated, logout, user } = useAuth();
-  
-//   // Debug log
-//   console.log('Navigation - Auth State:', { isAuthenticated, user });
-
-//   // Add a debug effect to verify the auth state
-//   useEffect(() => {
-//     console.log('Auth state changed:', { isAuthenticated, user });
-//   }, [isAuthenticated, user]);
-
-  
-
-//   const navItems = [
-//     { name: "Home", path: "/" },
-//     { name: "Explore", path: "/explore" },
-//     { name: "About Us", path: "/about-us" },
-//     { name: "Upload", path: "/upload" },
-//   ];
-
-//   const handleLogout = () => {
-//     logout();
-//     navigate('/');
-//     // Force a full page reload to ensure all state is cleared
-//     window.location.reload();
-//   };
-
-//   return (
-//     <nav className="sticky top-0 z-50 bg-primary text-primary-foreground backdrop-blur-sm shadow-sm">
-//       <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4">
-//         <div className="flex items-center justify-between">
-//           <Link to="/" className="flex items-center space-x-2">
-//             <h1 className="text-xl md:text-2xl font-heading font-bold text-primary-foreground">
-//               Heritage Repository
-//             </h1>
-//           </Link>
-          
-//           <div className="hidden md:flex items-center space-x-8">
-//             {navItems.map((item) => (
-//               <Link
-//                 key={item.path}
-//                 to={item.path}
-//                 className={cn(
-//                   "nav-link text-sm font-medium transition-colors",
-//                   location.pathname === item.path
-//                     ? "text-primary-foreground"
-//                     : "text-primary-foreground/80 hover:text-primary-foreground"
-//                 )}
-//               >
-//                 {item.name}
-//               </Link>
-//             ))}
-//             {isAuthenticated && (
-//               <Link
-//                 to="/profile"
-//                 className={cn(
-//                   "nav-link text-sm font-medium transition-colors",
-//                   location.pathname === '/profile'
-//                     ? "text-primary-foreground"
-//                     : "text-primary-foreground/80 hover:text-primary-foreground"
-//                 )}
-//               >
-//                 Profile
-//               </Link>
-//             )}
-//             {!isAuthenticated ? (
-//               <Link
-//                 to="/signup"
-//                 className={cn(
-//                   "nav-link text-sm font-medium transition-colors",
-//                   location.pathname === '/signup'
-//                     ? "text-primary-foreground"
-//                     : "text-primary-foreground/80 hover:text-primary-foreground"
-//                 )}
-//               >
-//                 Sign Up
-//               </Link>
-//             ) : null}
-//           </div>
-
-//           {/* Mobile menu button */}
-//           <div className="md:hidden">
-//             <div className="flex flex-col space-y-1">
-//               {navItems.map((item) => (
-//                 <Link
-//                   key={item.path}
-//                   to={item.path}
-//                   className={cn(
-//                     "text-xs font-medium px-2 py-1",
-//                     location.pathname === item.path
-//                       ? "text-primary-foreground"
-//                       : "text-primary-foreground/80"
-//                   )}
-//                 >
-//                   {item.name}
-//                 </Link>
-//               ))}
-//               {isAuthenticated && (
-//                 <Link
-//                   to="/profile"
-//                   className={cn(
-//                     "text-xs font-medium px-2 py-1",
-//                     location.pathname === '/profile'
-//                       ? "text-primary-foreground"
-//                       : "text-primary-foreground/80"
-//                   )}
-//                 >
-//                   Profile
-//                 </Link>
-//               )}
-//               {!isAuthenticated ? (
-//                 <Link
-//                   to="/signup"
-//                   className={cn(
-//                     "text-xs font-medium px-2 py-1",
-//                     location.pathname === '/signup'
-//                       ? "text-primary-foreground"
-//                       : "text-primary-foreground/80"
-//                   )}
-//                 >
-//                   Sign Up
-//                 </Link>
-//               ) : null}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navigation;
-
-
-
-
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Moon, Sun, Menu, User, LogOut, Upload, Home, Compass, Info, UserPlus , LogIn, Mail } from "lucide-react";
+import { Menu, User, LogOut, Upload, Home, Compass, Info, UserPlus , LogIn, Mail } from "lucide-react";
+import { AnimatedThemeToggler } from "./ui/animated-theme-toggler";
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, logout, user } = useAuth();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  // Initialize theme from localStorage or system preference
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    const initialTheme = savedTheme || systemTheme;
-    
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("light", initialTheme === "light");
-  }, []);
-
-  // Toggle theme
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
 
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Explore", path: "/explore", icon: Compass },
     { name: "About Us", path: "/about-us", icon: Info },
-    { name: "Upload", path: "/upload", icon: Upload },
+    { name: "Upload", path: "/user/dashboard/upload", icon: Upload },
     { name: "Contact", path: "/contact", icon: Mail }
   ];
 
@@ -233,20 +70,9 @@ const Navigation = () => {
           </div>
 
           {/* Desktop Right Actions */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden md:flex items-center space-x-4">
             {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? (
-                <Moon className="h-5 w-5" />
-              ) : (
-                <Sun className="h-5 w-5" />
-              )}
-            </Button>
+           <AnimatedThemeToggler />
 
             {/* User Menu or Sign Up */}
             {isAuthenticated ? (
@@ -264,11 +90,11 @@ const Navigation = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                  <DropdownMenuItem onClick={() => navigate('/user/dashboard')}>
                     <User className="h-4 w-4 mr-2" />
-                    Profile
+                    Dashboard
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/upload')}>
+                  <DropdownMenuItem onClick={() => navigate('/user/dashboard/upload')}>
                     <Upload className="h-4 w-4 mr-2" />
                     Upload Content
                   </DropdownMenuItem>
@@ -294,18 +120,7 @@ const Navigation = () => {
           {/* Mobile Menu */}
           <div className="flex md:hidden items-center space-x-2">
             {/* Mobile Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? (
-                <Moon className="h-5 w-5" />
-              ) : (
-                <Sun className="h-5 w-5" />
-              )}
-            </Button>
+           <AnimatedThemeToggler />
 
             {/* Mobile Menu Trigger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -355,10 +170,10 @@ const Navigation = () => {
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => handleNavClick('/profile')}
+                          onClick={() => handleNavClick('/user/dashboard')}
                         >
                           <User className="h-4 w-4 mr-3" />
-                          Profile
+                          Dashboard
                         </Button>
                         <Button
                           variant="ghost"

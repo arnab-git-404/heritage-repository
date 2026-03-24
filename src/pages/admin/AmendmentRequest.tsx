@@ -48,66 +48,11 @@ import {
   User,
   Calendar,
 } from 'lucide-react';
+import type { AmendmentRequest} from '@/types/AmendmentRequest';
+import type { Comparison } from '@/types/Comparison';
 
-interface AmendmentRequest {
-  _id: string;
-  versionNumber: number;
-  previousVersionNumber: number;
-  changesSummary: string;
-  changedFields: Array<{
-    fieldName: string;
-    changeType: string;
-    oldValue: any;
-    newValue: any;
-  }>;
-  status: 'pending' | 'approved' | 'rejected';
-  requestedAt: string;
-  reviewedAt?: string;
-  reviewNotes?: string;
-  userId: {
-    _id: string;
-    name: string;
-    email: string;
-    avatar?: string;
-    country?: string;
-    tribe?: string;
-  };
-  submissionId: {
-    _id: string;
-    title: string;
-    status: string;
-  };
-  approvedContentId?: {
-    _id: string;
-    title: string;
-    currentVersion: number;
-  };
-  reviewedBy?: {
-    _id: string;
-    name: string;
-    email: string;
-  };
-}
 
-interface Comparison {
-  current: {
-    version: string;
-    label: string;
-    data: any;
-  };
-  proposed: {
-    version: string;
-    label: string;
-    data: any;
-  };
-  changes: Array<{
-    field: string;
-    type: string;
-    before: any;
-    after: any;
-  }>;
-  summary: string;
-}
+
 
 export default function AmendmentRequests() {
   const navigate = useNavigate();
@@ -540,7 +485,7 @@ const renderFieldValue = (value: any, type: string) => {
                                 
                                 // viewAmendmentDetails(amendment._id) 
 
-                                navigate(`/amendments/${amendment._id}`)
+                                navigate(`/admin/amendments/${amendment._id}`)
 
                             }
                           >

@@ -8,7 +8,7 @@ export default function RequireAuth({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/signup', { replace: true });
+      navigate('/login', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
