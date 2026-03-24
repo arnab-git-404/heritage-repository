@@ -1,5 +1,4 @@
 import PublicLayout from "@/layouts/PublicLayout";
-import AdminLogin from "@/pages/admin/AdminLogin";
 import About from "@/pages/public/About";
 import Contact from "@/pages/public/Contact";
 import Explore from "@/pages/public/Explore";
@@ -8,8 +7,7 @@ import Landing from "@/pages/public/Landing";
 import Login from "@/pages/public/Login";
 import SignUp from "@/pages/public/SignUp";
 import ResetPassword from "@/pages/public/ResetPassword";
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 export const PublicRoutes = (
   <Route path="/" element={<PublicLayout />}>
