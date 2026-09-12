@@ -87,9 +87,3 @@ window.chatStorage = {
     clearChat,
     chatExists
 };
-
-// Example usage:
-// chatStorage.saveMessage('user', 'Hello, bot!');
-// chatStorage.saveMessage('bot', 'Hi there!');
-// const messages = chatStorage.loadMessages();
-// chatStorage.clearChat();

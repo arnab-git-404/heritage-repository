@@ -135,7 +135,7 @@ const SubmissionDetail = () => {
         description: error.message || "Failed to load submission details",
         variant: "destructive",
       });
-      navigate("/profile");
+      navigate("/user/dashboard/profile");
     } finally {
       setLoading(false);
     }
@@ -284,7 +284,7 @@ const SubmissionDetail = () => {
             <CardDescription>The submission you're looking for doesn't exist.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate("/profile")}>
+            <Button onClick={() => navigate("/user/dashboard/profile")}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Profile
             </Button>
@@ -303,7 +303,7 @@ const SubmissionDetail = () => {
       <div className="px-4 mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate("/profile")}>
+          <Button variant="ghost" onClick={() => navigate("/user/dashboard/profile")}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Profile
           </Button>
@@ -317,7 +317,7 @@ const SubmissionDetail = () => {
             {submission.amendmentStatus.currentVersion > 1 && (
               <Button
                 variant="outline"
-                onClick={() => navigate(`/profile/submissions/${id}/history`)}
+                onClick={() => navigate(`/user/dashboard/profile/submissions/${id}/history`)}
               >
                 <History className="h-4 w-4 mr-2" />
                 Version History ({submission.amendmentStatus.currentVersion})

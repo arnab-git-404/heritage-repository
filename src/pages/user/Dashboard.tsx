@@ -67,25 +67,12 @@ interface RecentSubmission {
   };
 }
 
-interface UserProfile {
-  _id: string;
-  name: string;
-  email: string;
-  role?: string;
-  country?: string;
-  tribe?: string;
-  avatar?: string;
-  bio?: string;
-  createdAt: string;
-}
-
 const Dashboard = () => {
-  
+
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
 
-  const [user, setUser] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentSubmissions, setRecentSubmissions] = useState<
     RecentSubmission[]
@@ -101,13 +88,6 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-
-      // Fetch user profile
-      const profileRes = await authFetch("/api/auth/me");
-      const profileData = await profileRes.json();
-      if (profileRes.ok) {
-        setUser(profileData.user);
-      }
 
       // Fetch dashboard stats
       const statsRes = await authFetch("/api/submissions/my/stats");
@@ -428,7 +408,7 @@ const Dashboard = () => {
                         Upload your first cultural heritage content
                       </p>
                     </div>
-                    <Button onClick={() => navigate("/upload")}>
+                    <Button onClick={() => navigate("/user/dashboard/upload")}>
                       <Upload className="h-4 w-4 mr-2" />
                       Upload Content
                     </Button>
@@ -440,7 +420,7 @@ const Dashboard = () => {
                         key={submission._id}
                         className="flex items-start gap-4 p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
                         onClick={() =>
-                          navigate(`/profile/submissions/${submission._id}`)
+                          navigate(`/user/dashboard/profile/submissions/${submission._id}`)
                         }
                       >
                         <div className="mt-1">

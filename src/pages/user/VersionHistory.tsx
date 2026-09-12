@@ -27,7 +27,9 @@ import {
 
 interface VersionEntry {
   version: number;
-  status: "approved" | "pending" | "rejected";
+  status: "approved" | "pending" | "rejected" | "cancelled" | "archived";
+  legacy?: boolean;
+  sourceType?: "Submission" | "ApprovedContent" | "AmendmentRequest";
   changesSummary?: string;
   updatedAt: string;
   updatedBy?: {
@@ -133,7 +135,7 @@ const VersionHistory = () => {
       <div className="px-4 mx-auto max-w-4xl space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate(`/profile/submissions/${id}`)}>
+          <Button variant="ghost" onClick={() => navigate(`/user/dashboard/profile/submissions/${id}`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Submission
           </Button>
@@ -176,12 +178,13 @@ const VersionHistory = () => {
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <CardTitle className="text-lg">
-                                {version.isOriginal ? "Original Submission" : `Amendment Request`}
+                                {version.isOriginal ? "Original Submission" : version.sourceType === "AmendmentRequest" ? "Amendment Request" : "Submission Revision"}
                               </CardTitle>
                               <Badge variant="outline" className="font-mono text-xs">
                                 v{version.version}
                               </Badge>
                               {getStatusBadge(version.status)}
+                              {version.legacy && <Badge variant="outline">Recovered history</Badge>}
                             </div>
                             {version.changesSummary && (
                               <CardDescription>{version.changesSummary}</CardDescription>

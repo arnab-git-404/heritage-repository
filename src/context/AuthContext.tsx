@@ -1,10 +1,17 @@
 import { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
-interface User {
-  id: string;
+export interface User {
+  _id: string;
   name: string;
   email: string;
+  role?: string;
+  country?: string;
+  state?: string;
+  tribe?: string;
+  village?: string;
+  avatar?: string;
+  bio?: string;
   createdAt: string;
 }
 

@@ -168,16 +168,19 @@ const Users = () => {
 
     setActionLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/admin/users/${selectedUser._id}`, {
+      // Only role changes are backed by an admin endpoint today - name/email/
+      // country/etc are self-service only (PATCH /api/auth/profile), not
+      // editable by an admin on someone else's account.
+      const response = await fetch(`${API_URL}/api/admin/users/${selectedUser._id}/role`, {
         method: "PATCH",
         headers: getAuthHeaders(),
-        body: JSON.stringify(editForm),
+        body: JSON.stringify({ role: editForm.role }),
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data?.errors?.[0]?.msg || "Failed to update user");
 
-      toast({ title: "Success", description: "User updated successfully" });
+      toast({ title: "Success", description: "User role updated successfully" });
       setEditDialogOpen(false);
       setSelectedUser(null);
       fetchUsers();
@@ -488,6 +491,7 @@ const Users = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
+            <SelectItem value="Admin">Admin</SelectItem>
             <SelectItem value="Custodian">Custodian</SelectItem>
             <SelectItem value="Researcher">Researcher</SelectItem>
             <SelectItem value="Contributor">Contributor</SelectItem>
@@ -606,26 +610,20 @@ const Users = () => {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>Update user information and settings</DialogDescription>
+            <DialogDescription>
+              Only the role can be changed here - it's the only field an admin can update on someone
+              else's account. The rest is shown for reference; users manage it themselves.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="edit-name">Name</Label>
-                <Input
-                  id="edit-name"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                />
+                <Input id="edit-name" value={editForm.name} disabled />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-email">Email</Label>
-                <Input
-                  id="edit-email"
-                  type="email"
-                  value={editForm.email}
-                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                />
+                <Input id="edit-email" type="email" value={editForm.email} disabled />
               </div>
             </div>
 
@@ -639,6 +637,7 @@ const Users = () => {
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="Admin">Admin</SelectItem>
                   <SelectItem value="Custodian">Custodian</SelectItem>
                   <SelectItem value="Researcher">Researcher</SelectItem>
                   <SelectItem value="Contributor">Contributor</SelectItem>
@@ -650,49 +649,28 @@ const Users = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="edit-country">Country</Label>
-                <Input
-                  id="edit-country"
-                  value={editForm.country}
-                  onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
-                />
+                <Input id="edit-country" value={editForm.country} disabled />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-state">State</Label>
-                <Input
-                  id="edit-state"
-                  value={editForm.state}
-                  onChange={(e) => setEditForm({ ...editForm, state: e.target.value })}
-                />
+                <Input id="edit-state" value={editForm.state} disabled />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="edit-tribe">Tribe</Label>
-                <Input
-                  id="edit-tribe"
-                  value={editForm.tribe}
-                  onChange={(e) => setEditForm({ ...editForm, tribe: e.target.value })}
-                />
+                <Input id="edit-tribe" value={editForm.tribe} disabled />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-village">Village</Label>
-                <Input
-                  id="edit-village"
-                  value={editForm.village}
-                  onChange={(e) => setEditForm({ ...editForm, village: e.target.value })}
-                />
+                <Input id="edit-village" value={editForm.village} disabled />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="edit-bio">Bio</Label>
-              <Textarea
-                id="edit-bio"
-                value={editForm.bio}
-                onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                rows={4}
-              />
+              <Textarea id="edit-bio" value={editForm.bio} rows={4} disabled />
             </div>
           </div>
           <DialogFooter>

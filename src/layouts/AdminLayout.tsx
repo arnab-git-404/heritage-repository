@@ -15,6 +15,7 @@ import {
   RefreshCw,
   Bell,
   Settings,
+  ShieldCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -103,6 +104,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       title: "Users",
       href: "/admin/users",
       icon: Users,
+      badge: null,
+    },
+    {
+      title: "Roles & Permissions",
+      href: "/admin/roles",
+      icon: ShieldCheck,
       badge: null,
     },
     {
